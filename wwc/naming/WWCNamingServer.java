@@ -134,7 +134,8 @@ public class WWCNamingServer {
                        + UANProtocol.BAD_REQ_STATUS_CODE + "\n"
                        + "Wrong Version" + "\n"
                        );
-          continue;
+          // continue;
+		  break;
         }
         else {
           //handle GET command
@@ -156,8 +157,8 @@ public class WWCNamingServer {
                            );
               System.out.println("Query " + parameter1+ " Get "+ mappedUAL +", from "+clientSocket.getInetAddress()+":"+clientSocket.getPort());
             }
-            continue;
-
+            // continue;
+			break;
           //handle PUT command
           } else if (command.equals(UANProtocol.PUT_REQUEST_CODE)) {
             if (parameter2!=null) {
@@ -190,18 +191,22 @@ public class WWCNamingServer {
                          + UANProtocol.BAD_REQ_STATUS_CODE + "\n"
                          + UANProtocol.BAD_REQ_STATUS_STR + "\n"
                          );
-            continue;
+            // continue;
+			break;
           }
         }
+		break;
       }
     }catch (IOException e) {
       System.out.println("Connection Closed: "+clientSocket.getInetAddress().getHostName()+":"+clientSocket.getPort());
-      try {
-        outs.close();
-        ins.close();
-        clientSocket.close();
-      } catch (Exception exc) {}
+
       return;
-    }
+    } finally {
+      try {
+		  if (outs != null) outs.close();
+		  if (ins != null) ins.close();
+		  if (clientSocket != null) clientSocket.close();
+      } catch (Exception exc) {}
+	}
   }
 }
