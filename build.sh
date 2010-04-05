@@ -41,7 +41,7 @@ echo "salsa source..."
 java -Dsilent salsac.SalsaCompiler `find tests/ | grep "salsa$"`
 echo "java source..."
 javac -Xlint:none -d $DIST `find tests/ | grep "java$"`
-
+echo ""
 
 echo "Compiling Examples"
 echo "salsa source..."
