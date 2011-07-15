@@ -68,6 +68,8 @@ public class GCObjectInputStream extends ObjectInputStream {
   }
 
   public Vector getRefSummary() {return refSummary;}
+	public Vector getMails() { return mails; }
+	public void clearMails() { mails.clear(); }
   public void sendMails() {
     for (int i=0;i<mails.size();i++) {
       Message msg=(Message)mails.get(i);

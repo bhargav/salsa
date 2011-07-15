@@ -1,6 +1,6 @@
 
 /**
- * $Id: UniversalActor.java,v 1.5 2007/02/23 01:16:58 deselt Exp $
+ * $Id: UniversalActor.java,v 1.6 2010/06/11 05:49:36 wangw5 Exp $
  *
  * This is the main Actor class.
  *
@@ -42,6 +42,8 @@ import java.io.Serializable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 
 import java.lang.reflect.Method;
 
@@ -702,7 +704,16 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
 	 *	if it is not waiting for any tokens. If it is, the
 	 *	message goes in the Hashtable of pendingMessages.
 	 */
-	public synchronized void putMessageInMailbox(Message message) {
+
+	public void putMessageInMailbox(Message message)
+	{
+		stateMemory.setActive(true);
+		RunTime.receivedMessage();
+		responseAck(message);
+		putMessageInMailboxImp(message);
+	}
+
+	public synchronized void putMessageInMailboxImp(Message message) {
                 if (message.getMethodName().equals("getPlaceholderMsg")) {
                   Object[] args=message.getArguments();
                   getPlaceholderMsg((Object[])args[0]);
@@ -712,9 +723,8 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                   if (message.refSummary!=null)
                     stateMemory.getForwardMailboxRefList().putReference(message.refSummary);
                 }
-                stateMemory.setActive(true);
-		RunTime.receivedMessage();
-                responseAck(message);
+
+                //responseAck(message);
 		/**
 		 * If this message is waiting for any tokens, it cannot
 		 * be put in the normal mailbox, because then it would be
@@ -778,8 +788,9 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                           if (this.unresolvedTokens.isEmpty() && this.pendingMessages.isEmpty()) {
                             stateMemory.setActive(false);
                           }
+				//System.out.println("waiting:" + this.getIdentifier());
 				wait();      // The lock of Mailbox means it is empty.
-
+				//System.out.println("wakeup :" + this.getIdentifier());
 			} catch (InterruptedException ie){
 				System.err.println("Error from within salsa.language.Actor: " + toString());
 				System.err.println("\tError getting a new message:");
@@ -801,6 +812,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                 while (isLive()) {
                         currentMessage = getMessage();
                         if (currentMessage==null) {continue;}
+						//System.out.println("process:" + this.getIdentifier() + ", m=" + currentMessage.getMethodName());
 			process(currentMessage);
                         if (!currentMessage.getMethodName().equals("die") ) {
                               RunTime.finishedProcessingMessage();
@@ -871,6 +883,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                                 RunTime.receivedMessage();
 				new Thread(delayThread, "Delay Thread").start();
 			} else {
+//System.out.println("sending:" + this.getIdentifier() + ", target=" + current.getTarget());
 				target.send( current );
 			}
 		}
@@ -1199,7 +1212,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
           stateMemory.getForwardList().waitAck(ref);
         }
 
-        protected synchronized void responseAck(Message msg) {
+        protected void responseAck(Message msg) {
           if (msg.getNeedAck()==false) {return;}
           if (msg.getMethodName().equals("construct")) {return;}
           WeakReference ackTarget=(WeakReference)msg.getSource();
@@ -1217,6 +1230,59 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
             ackTarget.send(ackMsg);
           }
         }
+
+		//*********************************************************
+		//This method is invoked while a message is about processing
+		//*********************************************************
+		public void  activateArgsGC(Message msg)
+		{
+			byte[] serializedArguments;
+			if (!msg.getHasActorReferenceArgs()) { return; }
+			if (msg.getMethodName().equals("addActor")) { return; }
+			//System.out.println("activate:" + getIdentifier() + ", (=1=)");
+			try
+			{
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream outStream = new ObjectOutputStream(bos);
+				outStream.writeObject(msg.getArguments());
+				outStream.flush();
+				serializedArguments = bos.toByteArray();
+				outStream.close();
+				bos.close();
+			}
+			catch (Exception e) { System.err.println("Message Class, getArguments() method: Error on serializing method arguments:" + e); return; }
+			//System.out.println("activate:" + getIdentifier() + ", (=2=)");
+			try
+			{
+				ByteArrayInputStream bis = new ByteArrayInputStream(serializedArguments);
+				GCObjectInputStream inStream = new GCObjectInputStream(bis, GCObjectInputStream.ACTIVATE_GC, msg.getWeakRefTarget(), msg.getWeakRefSource());
+				msg.setArguments((Object[])inStream.readObject());
+				//System.out.println("activate:" + getIdentifier() + ", (=3=)");
+				msg.refSummary = inStream.getRefSummary();
+				//System.out.println("activate:" + getIdentifier() + ", (=4=)");
+				//register forward references
+				for (int i = 0; i < msg.refSummary.size(); i++)
+				{
+					stateMemory.getForwardList().putReference(((String)(msg.refSummary.get(i))));
+				}
+				//System.out.println("activate:" + getIdentifier() + ", (=5=)");
+				__messages.addAll(inStream.getMails());
+				//for (int i = 0; i < mails.size(); i++)
+				//{
+				//	Message sysmsg = (Message)mails.get(i);
+				//	sysmsg.getTarget().send(sysmsg);
+				//}
+				inStream.clearMails();
+				//System.out.println("activate:" + getIdentifier() + ", (=6=)");
+				inStream.close();
+				bis.close();
+				//System.out.println("activate:" + getIdentifier() + ", (=7=)");
+
+			}
+			catch (Exception e) { System.err.println("Message Class, activateArgsGC() method:Error on deserializing method arguments:" + e); }
+			return;
+		}
+
 
         /**
          *  It forces all references in this actor becoming silent

@@ -1,6 +1,6 @@
 export CLASSPATH=./classes:$CLASSPATH 
 DIST=./classes
-VERSION=1.1.3
+VERSION=1.1.4
 
 echo "SALSA Build Script v0.2.2"
 echo "Please make sure the current directory is in your CLASSPATH"

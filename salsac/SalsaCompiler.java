@@ -1,7 +1,7 @@
 package salsac;
 
 /**
- * $Id: SalsaCompiler.java,v 1.4 2007/02/17 15:43:45 laporj2 Exp $
+ * $Id: SalsaCompiler.java,v 1.5 2010/06/11 05:49:42 wangw5 Exp $
  *
  * This is the Salsa programming language compiler.  Compilation goes
  * through two major steps:
@@ -32,7 +32,7 @@ public class SalsaCompiler {
         //actMethodExist: check if method act() exists
         public static boolean actMethodExist=false;
         public static boolean isService=false;
-	public static final String VERSION = "1.1.2";
+	public static final String VERSION = "1.1.4";
 
 	private String[] files = null;
 

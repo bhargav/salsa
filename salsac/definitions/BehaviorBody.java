@@ -228,7 +228,7 @@ code += SalsaCompiler.getIndent() + "}\n\n";
                 code += SalsaCompiler.getIndent() + "\tException exception = null;\n\n";
 
                 code += SalsaCompiler.getIndent() + "\tif (matches != null) {\n";
-                code += SalsaCompiler.getIndent() + "\t\tif (!message.getMethodName().equals(\"die\")) {message.activateArgsGC(this);}\n";
+				code += SalsaCompiler.getIndent() + "\t\tif (!message.getMethodName().equals(\"die\")) {activateArgsGC(message);}\n";
                 code += SalsaCompiler.getIndent() + "\t\tfor (int i = 0; i < matches.length; i++) {\n";
                 code += SalsaCompiler.getIndent() + "\t\t\ttry {\n";
 
@@ -542,7 +542,7 @@ code += SalsaCompiler.getIndent() + "}\n\n";
 		code += SalsaCompiler.getIndent() + "\tException exception = null;\n\n";
 
 		code += SalsaCompiler.getIndent() + "\tif (matches != null) {\n";
-                code += SalsaCompiler.getIndent() + "\t\tif (!message.getMethodName().equals(\"die\")) {message.activateArgsGC(this);}\n";
+		code += SalsaCompiler.getIndent() + "\t\tif (!message.getMethodName().equals(\"die\")) {activateArgsGC(message);}\n";
 
 		code += SalsaCompiler.getIndent() + "\t\tfor (int i = 0; i < matches.length; i++) {\n";
 		code += SalsaCompiler.getIndent() + "\t\t\ttry {\n";

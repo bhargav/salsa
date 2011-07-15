@@ -1,5 +1,3 @@
-module examples.heat_v2;
-
 public behavior Collector {
 
 	int number_workers = 0;

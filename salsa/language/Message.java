@@ -63,7 +63,11 @@ public class Message implements java.io.Serializable {
 	 */
 	private	WeakReference	source, target;
         private boolean hasActorReferenceArgs=false;
+	    public boolean getHasActorReferenceArgs() { return hasActorReferenceArgs; }
+
         public Vector refSummary=null;
+
+
 
 	public	ActorReference	getSource(){
           if (source==null) {
@@ -75,6 +79,20 @@ public class Message implements java.io.Serializable {
 	public	ActorReference	getTarget() {
           return target;
         }
+
+		public WeakReference getWeakRefSource()
+		{
+			if (source == null)
+			{
+				return target;
+				//return null;
+			}
+			return source;
+		}
+	public WeakReference getWeakRefTarget()
+		{
+			return target;
+		}
 
 	public String getSourceName () {
 		if (source == null) return "";
@@ -550,6 +568,8 @@ public class Message implements java.io.Serializable {
         }
 
         public	Object[]	getArguments()	{return arguments;}
+
+	    public void setArguments(Object[] args) { arguments = args; }
 
         //*********************************************************
         //This method is invoked while a message is about processing

@@ -422,7 +422,7 @@ refreshUanUalTable();
                   in.readLine();
                 }
                 catch (IOException ioe) {}
-              } 
+              }
               else {
                 //e.printStackTrace();
                 throw new SalsaWrapperException("UANP GET Failed: " + name, e);
@@ -431,13 +431,6 @@ refreshUanUalTable();
             catch (IOException e) {
               throw new SalsaWrapperException("UANP GET Failed: " + name, e);
             }
-			finally {
-				if (socketWrap != null) {
-					socketWrap.die();
-					nameServer.remove(socketWrap);
-				}
-			}
-
           }
 
           if (!version.equals(UANProtocol.VERSION)){
@@ -500,12 +493,6 @@ refreshUanUalTable();
 //e.printStackTrace();
               throw new SalsaWrapperException( "UANP PUT Failed: ", e );
             }
-			finally {
-				if (socketWrap != null) {
-					socketWrap.die();
-					nameServer.remove(socketWrap);
-				}
-			}
           }
           if (!version.equals(UANProtocol.VERSION))
             throw new SalsaException("UANP " + "Version Error: " + UANProtocol.VERSION +" and " +version);
@@ -572,12 +559,6 @@ refreshUanUalTable();
 //e.printStackTrace();
               throw new SalsaWrapperException( "UANP PUT Failed: ", e );
             }
-			finally {
-				if (socketWrap != null) {
-					socketWrap.die();
-					nameServer.remove(socketWrap);
-				}
-			}
           }
           if (!version.equals(UANProtocol.VERSION))
             System.err.println("UANP DEL " + name + " Error: " + result);

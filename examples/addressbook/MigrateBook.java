@@ -215,7 +215,7 @@ public class MigrateBook extends UniversalActor  {
 			Exception exception = null;
 
 			if (matches != null) {
-				if (!message.getMethodName().equals("die")) {message.activateArgsGC(this);}
+				if (!message.getMethodName().equals("die")) {activateArgsGC(message);}
 				for (int i = 0; i < matches.length; i++) {
 					try {
 						if (matches[i].getParameterTypes().length != message.getArguments().length) continue;

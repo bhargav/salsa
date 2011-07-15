@@ -1,5 +1,3 @@
-package examples.heat_v2;
-
 public class LowMemoryArray implements java.io.Serializable {
 	int x,y;
 	double[] array;
