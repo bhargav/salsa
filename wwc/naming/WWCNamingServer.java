@@ -14,8 +14,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
@@ -32,6 +37,9 @@ public class WWCNamingServer {
   static Hashtable locationMap;							// Mapping from UAN's to UAL's.
 								// Used for communications.
   static private boolean flag = true;							// Flag variable for while loop.
+
+  static private boolean netIfSpecified = false;
+  static private InetAddress inetAddr = null;
 
   public static void main(String[] argv) {
     for (int x=0; x<argv.length; x++) {
@@ -51,14 +59,50 @@ public class WWCNamingServer {
         helpMessage("illegal option");
     }
 
+    // Check to see if a valid network interface is specified
+    String propertyNetIf = System.getProperty("netif");
+    if (propertyNetIf != null) {
+      NetworkInterface netIf = null;
+
+      try {
+        netIf = NetworkInterface.getByName( propertyNetIf );
+      }
+      catch (SocketException e) {
+        System.err.println("Theater Service error:");
+        System.err.println("\tCould not specify network interface.");
+        System.err.println("\tException: " + e);
+      }
+
+      if (netIf != null) {
+        Enumeration<InetAddress> inetAddrs = netIf.getInetAddresses();
+        for (InetAddress inetAddr : Collections.list( inetAddrs )) {
+          byte[] rawInetAddr = inetAddr.getAddress();
+          if (rawInetAddr.length == 4) {	// make sure the address is IPv4
+            WWCNamingServer.inetAddr = inetAddr;
+            WWCNamingServer.netIfSpecified = true;
+            break;
+          }
+        }
+      }
+
+      if (!WWCNamingServer.netIfSpecified)
+          System.err.println( "Warning: no valid IPv4 address found for the netif '" + propertyNetIf + "', use default" );
+    }
+
     try {
-      serverSocket = new ServerSocket(portNumber);
+      if (WWCNamingServer.netIfSpecified)
+        serverSocket = new ServerSocket( portNumber, 1, WWCNamingServer.inetAddr );
+      else
+        serverSocket = new ServerSocket(portNumber);
     } catch (IOException e) {
       System.out.println("Could not listen on port: "+portNumber+", "+e);
       System.exit(1);
     }
 
-    System.out.println("WWCNamingServer listening on port: " + portNumber);
+    if (WWCNamingServer.netIfSpecified)
+      System.out.println("WWCNamingServer listening on " + WWCNamingServer.inetAddr + ":" + portNumber);
+    else
+      System.out.println("WWCNamingServer listening on port: " + portNumber);
 
     locationMap = new Hashtable();
     int i=0;

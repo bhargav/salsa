@@ -1,6 +1,6 @@
 export CLASSPATH=./classes:$CLASSPATH 
 DIST=./classes
-VERSION=1.1.4
+VERSION=1.1.5
 
 echo "SALSA Build Script v0.2.2"
 echo "Please make sure the current directory is in your CLASSPATH"
@@ -52,7 +52,7 @@ echo ""
 
 echo "Generating jar file..."
 cd $DIST
-jar cf ../salsa$VERSION.jar *
+jar cf ../salsa$VERSION.jar `find wwc` `find salsa` `find salsac` `find gc`
 cd ..
 
 echo ""

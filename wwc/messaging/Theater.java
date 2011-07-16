@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.PropertyResourceBundle;
+import java.util.Enumeration;
 
 import salsa.language.Actor;
 import salsa.language.RunTime;
@@ -31,6 +35,9 @@ public class Theater implements TheaterService {
 
         private static int port = 0;
         public int getPort() 		{ return Theater.port; }
+
+        private static boolean netIfSpecified = false;
+        private static InetAddress inetAddr = null;
 
         private boolean applet = false;
         public void isApplet() { applet = true; }
@@ -65,10 +72,43 @@ public class Theater implements TheaterService {
           if (!applet) propertyPort = System.getProperty("port");
           if (propertyPort != null) Theater.port = Integer.parseInt(propertyPort);
 
+          // Check to see if a valid network interface is specified
+    	  String propertyNetIf = System.getProperty("netif");
+    	  if (propertyNetIf != null) {
+    		NetworkInterface netIf = null;
+
+            try {
+              netIf = NetworkInterface.getByName( propertyNetIf );
+            }
+            catch (SocketException e) {
+              System.err.println("Theater Service error:");
+              System.err.println("\tCould not specify network interface.");
+              System.err.println("\tException: " + e);
+            }
+
+            if (netIf != null) {
+              Enumeration<InetAddress> inetAddrs = netIf.getInetAddresses();
+              for (InetAddress inetAddr : Collections.list( inetAddrs )) {
+                byte[] rawInetAddr = inetAddr.getAddress();
+                if (rawInetAddr.length == 4) {	// make sure the address is IPv4
+                  Theater.inetAddr = inetAddr;
+                  Theater.netIfSpecified = true;
+                  break;
+                }
+              }
+    		}
+
+            if (!Theater.netIfSpecified)
+              System.err.println( "Warning: no valid IPv4 address found for the netif '" + propertyNetIf + "', use default" );
+          }
+
             // Create a server socket.
           ServerSocket server = null;
           try {
-            server = new ServerSocket( Theater.port );
+    		if (Theater.netIfSpecified)
+    			server = new ServerSocket( Theater.port, 1, Theater.inetAddr );
+    		else
+    			server = new ServerSocket( Theater.port );
 
             //System.err.println("Recv Buffer Size: "+server.getReceiveBufferSize());
 
@@ -129,10 +169,15 @@ public class Theater implements TheaterService {
                 if (hostName != null) {
                         return hostName;
                 } else {
-                        try {
-                                hostName = InetAddress.getLocalHost().getHostAddress();
-                        } catch (UnknownHostException e) {
-                                hostName = "localhost";
+                        if (Theater.netIfSpecified) {
+                                hostName = Theater.inetAddr.getHostAddress();
+                        }
+                        else {     	
+                                try {
+                                        hostName = InetAddress.getLocalHost().getHostAddress();
+                                } catch (UnknownHostException e) {
+                                        hostName = "localhost";
+                                }
                         }
                         return hostName;
                 }
