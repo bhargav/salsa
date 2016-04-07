@@ -1,3 +1,5 @@
+set -e -o pipefail
+
 export CLASSPATH=./classes:$CLASSPATH 
 DIST=./classes
 VERSION=1.1.5
