@@ -52,6 +52,8 @@ import java.util.Vector;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import salsa.language.exceptions.CurrentContinuationException;
 
 import salsa.messaging.TheaterService;
@@ -79,6 +81,8 @@ public class UniversalActor implements ActorReference, java.io.Serializable {
 
 	private UAN uan = null;
 	private UAL ual = null;
+
+	private final static Logger logger = LoggerFactory.getLogger(UniversalActor.class);
 
 	/*
 	 * These methods retrieve the UAN and UAL of the actor
@@ -812,7 +816,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                 while (isLive()) {
                         currentMessage = getMessage();
                         if (currentMessage==null) {continue;}
-						//System.out.println("process:" + this.getIdentifier() + ", m=" + currentMessage.getMethodName());
+						logger.info("process: {}, m={}", this.getIdentifier(), currentMessage.getMethodName());
 			process(currentMessage);
                         if (!currentMessage.getMethodName().equals("die") ) {
                               RunTime.finishedProcessingMessage();
