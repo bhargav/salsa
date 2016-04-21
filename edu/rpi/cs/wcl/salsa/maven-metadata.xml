@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>edu.rpi.cs.wcl</groupId>
+  <artifactId>salsa</artifactId>
+  <versioning>
+    <versions>
+      <version>1.2.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20160421003830</lastUpdated>
+  </versioning>
+</metadata>
