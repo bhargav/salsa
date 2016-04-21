@@ -817,6 +817,12 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                         currentMessage = getMessage();
                         if (currentMessage==null) {continue;}
 						logger.info("process: {}, m={}", this.getIdentifier(), currentMessage.getMethodName());
+			String id = currentMessage.getTarget().getID();
+ 			if(!id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
+			{
+				System.out.println(currentMessage.getTarget().toString() + " AND ");
+			}
+
 			process(currentMessage);
                         if (!currentMessage.getMethodName().equals("die") ) {
                               RunTime.finishedProcessingMessage();
