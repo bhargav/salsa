@@ -1,0 +1,67 @@
+module demo;
+
+
+
+/* This behavior connects to Android phone to receive required profiling data
+   
+   Written by Reza Shiftehfar
+   r.shiftefar@gmail.com
+*/
+
+behavior Profiler implements ActorService{
+  static final long serialVersionUID = 2L;
+
+  private Reporter_Actor reporter_actor;
+  private boolean        isReporting;
+  
+  public Profiler(boolean is_reporting, Reporter_Actor rep_actor){
+      reporter_actor = (Reporter_Actor) rep_actor;    
+      isReporting = is_reporting;
+  }
+
+
+  public void start_battery_profiling(){
+      standardOutput<-println("Profiler: Battery Profiler started.");
+      this.report("Profiler: Battery Profiler started.");
+      standardOutput<-registerBatteryStatusReceiver( self );
+
+  }
+
+  public void start_energy_profiling(){
+      standardOutput<-println("Profiler: Energy Profiler started.");
+      this.report("Profiler: Energy Profiler started.");
+      standardOutput<-registerEnergyProfilerReceiver( self );
+
+  }
+
+  //This method is called whenever there is a Battery Update from phone:
+  public void battery_status_update(boolean isCharging, boolean usbCharge, boolean acCharge,
+                                       int batteryLevel, int voltage, int temp ) {
+      long  startTime= System.currentTimeMillis(); 
+
+      standardOutput<-println("Profiler: batteryLevel="+batteryLevel+" voltage="+voltage+" temp="+temp+" time:"+startTime);
+      this.report("Profiler: batteryLevel="+batteryLevel+" voltage="+voltage+" temp="+temp+" time:"+startTime);
+
+  }
+
+  //This method is called whenever there is a Energy Update from phone (currently every 1 sec):
+  public void energy_status_update(String reporting_title, String reporting_time_interval,
+                                              double battery_temp, double battery_voltage, double battery_charge,
+                                              double battery_perc, double instant_power, double avg_power,
+                                              double current, double total_energy,
+                                              String[] apps_name, double[] apps_energy_perc,
+                                              long[] apps_duration, double[] apps_energy_value ) {
+      long  startTime= System.currentTimeMillis(); 
+
+      standardOutput<-println("Profiler: Energy Update: battery_voltage="+battery_voltage+" instant power="+instant_power+" time:"+startTime);
+      this.report("Profiler: Energy Update: battery_voltage="+battery_voltage+" instant power="+instant_power+" time:"+startTime);
+
+  }
+
+
+  void report(String msg){
+    if (isReporting)
+      reporter_actor <- report( msg );
+  }
+
+}
