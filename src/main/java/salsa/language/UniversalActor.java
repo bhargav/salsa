@@ -890,7 +890,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
 				catch(Exception e)
 				{
 					System.out.println(keyExists + " Target is "  + targetName + " " + e.toString());
-					throw e;
+					// throw e;
 				}
 				finally {
 					actorListLock.unlock();
