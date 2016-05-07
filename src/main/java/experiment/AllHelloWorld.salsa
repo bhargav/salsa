@@ -1,6 +1,12 @@
 module demo;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 behavior AllHelloWorld {
+   
+    private static Logger logger = Logger.getLogger("ProgressLog");
+
     void hello(){
         standardOutput <- print("Hello ");
     }
@@ -8,19 +14,20 @@ behavior AllHelloWorld {
         standardOutput <- println("World!");
     }
 
-    void dummy()
+    void dummy(int count, int total)
     {
+	logger.log(Level.INFO, "Iteration: " + count + " out of " + total);
     }       
 
-    void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count){
+    void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count, int total){
 	join{
-		world <- helloworld():delay(new Integer(count * 4000));
-		nqueen <- act(argNqueens):delay(new Integer(count * 5000));
+		world <- helloworld():delay(new Integer(count * 1000));
+		nqueen <- act(argNqueens):delay(new Integer(count * 1500));
 		//world <- helloworld();
 		//nqueen <- act(argNqueens);
 	} @
 	join{
-		fib <- act(argFibonacci):delay(new Integer(count * 6000));
+		fib <- act(argFibonacci):delay(new Integer(count * 2000));
 		/*
 		Speaker sp1 = new Speaker("s1");
 		sp1 <- act(new String[]{"s1"});
@@ -29,7 +36,7 @@ behavior AllHelloWorld {
 		Chat ch = new Chat();
 		ch <- act(new String[]{"s1", "s2"});	
 		*/
-	} @ dummy();
+	} @ dummy(count, total);
     }
 
     void act(String arguments[]){
@@ -37,12 +44,12 @@ behavior AllHelloWorld {
 	HelloWorld1[] worlds = new HelloWorld1[iter];
 
 	Integer queensArg = iter * 5;
-	Integer fibArg = iter * 10;
+	Integer fibArg = iter * 2;
 	
 	String argNqueens[] = new String[] {queensArg.toString(), queensArg.toString()};
 	String argFibonacci[] = new String[] {fibArg.toString()};
 	Nqueens nqueens = new Nqueens();
-	Fibonacci fib = new Fibonacci(iter * 4);
+	Fibonacci fib = new Fibonacci(iter * 2);
 	
 	for(int i = 0; i < iter; i++)
 	{
@@ -72,7 +79,7 @@ behavior AllHelloWorld {
 			} @ currentContinuation;
 			starter <- act(args);
 */
-			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count);
+			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, iter * 5 * iter);
 		}
 
 	}
