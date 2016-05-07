@@ -51,9 +51,11 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import salsa.language.exceptions.CurrentContinuationException;
 
 import salsa.messaging.TheaterService;
@@ -82,7 +84,8 @@ public class UniversalActor implements ActorReference, java.io.Serializable {
 	private UAN uan = null;
 	private UAL ual = null;
 
-	private final static Logger logger = LoggerFactory.getLogger(UniversalActor.class);
+	private static HashMap<String, Integer> activeActorList = new HashMap<String, Integer>();
+	private static Lock actorListLock = new ReentrantLock();
 
 	/*
 	 * These methods retrieve the UAN and UAL of the actor
@@ -210,6 +213,25 @@ public class UniversalActor implements ActorReference, java.io.Serializable {
         public UniversalActor(boolean o,UAL ual)	{ this.ual = ual; }
 
 	public UniversalActor(boolean o,UAN uan)        {this(uan);}
+
+	public static HashMap<String, Integer> getActiveActors()
+	{
+		HashMap<String, Integer> actorsMap = new HashMap<String, Integer>();
+		actorListLock.lock();
+		try {
+			Iterator<String> it = activeActorList.keySet().iterator();
+			while(it.hasNext())
+			{
+				String key = it.next();
+				actorsMap.put(key, activeActorList.get(key));
+			}
+		}
+		finally {	
+			actorListLock.unlock();
+		}
+		
+		return actorsMap;
+	}
 
 	/**
 	 * The following methods provide a way to get a reference to an actor by name or by
@@ -816,17 +838,66 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
                 while (isLive()) {
                         currentMessage = getMessage();
                         if (currentMessage==null) {continue;}
-						logger.info("process: {}, m={}", this.getIdentifier(), currentMessage.getMethodName());
-			String id = currentMessage.getTarget().getID();
- 			if(!id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
+						//System.out.println("process:" + this.getIdentifier() + ", m=" + currentMessage.getMethodName());
+			ActorReference actorRef = currentMessage.getTarget();
+			String id = null;
+			if(actorRef != null)
 			{
-				System.out.println(currentMessage.getTarget().toString() + " AND ");
+				id = actorRef.getID();
+			}
+
+			String targetName = this.getClass().getName();
+			if(id != null && !id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
+			{
+				//System.out.println(this.getClass().getName() + " AND3 " + currentMessage.getMethodName() + " AND4 ");
+				actorListLock.lock();
+				try {
+					if(activeActorList.containsKey(targetName))
+					{
+						Integer count = activeActorList.get(targetName);
+						activeActorList.put(targetName, ++count);
+					}
+					else
+					{
+						activeActorList.put(targetName, 1);
+					}
+				}
+				finally {
+					actorListLock.unlock();
+				}
 			}
 
 			process(currentMessage);
                         if (!currentMessage.getMethodName().equals("die") ) {
                               RunTime.finishedProcessingMessage();
                         }
+			
+			//if(activeActorList.containsKey(targetName))
+			//{
+			if(id != null && !id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
+			{
+				actorListLock.lock();
+				boolean keyExists = false;
+				try{
+					keyExists = activeActorList.containsKey(targetName);
+					Integer currentTargetCount = activeActorList.get(targetName);
+					activeActorList.put(targetName, --currentTargetCount);
+					if(currentTargetCount == 0)
+					{
+						activeActorList.remove(targetName);
+					}
+				}
+				catch(Exception e)
+				{
+					System.out.println(keyExists + " Target is "  + targetName + " " + e.toString());
+					throw e;
+				}
+				finally {
+					actorListLock.unlock();
+				}
+			}
+			//}
+
                         currentMessage=null;
 		}
                 if (!migrating) {

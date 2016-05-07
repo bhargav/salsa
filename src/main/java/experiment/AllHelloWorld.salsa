@@ -14,10 +14,10 @@ behavior AllHelloWorld {
 
     void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count){
 	join{
-		//world <- helloworld():delay(new Integer(4000));
-		//nqueen <- act(argNqueens):delay(new Integer(10000));
-		world <- helloworld();
-		nqueen <- act(argNqueens);
+		world <- helloworld():delay(new Integer(4000));
+		nqueen <- act(argNqueens):delay(new Integer(10000));
+		//world <- helloworld();
+		//nqueen <- act(argNqueens);
 	} @
 	join{
 		fib <- act(argFibonacci):delay(new Integer(count * 5000));
@@ -34,39 +34,38 @@ behavior AllHelloWorld {
 
     void act(String arguments[]){
 	HelloWorld1[] worlds = new HelloWorld1[10];
-	//Exp_Starter starter = new Exp_Starter();
 	String argNqueens[] = new String[] {"5", "5"};
 	String argFibonacci[] = new String[] {"5"};
 	Nqueens nqueens = new Nqueens();
 	Fibonacci fib = new Fibonacci(4);
 	
-
 	for(int i = 0; i < 10; i++)
 	{
 		worlds[i] = new HelloWorld1();
 	}
 
 	int count = 0;
-	while(count < 10)
+	while(count < 5)
 	{
 		count++;
 		for(int i = 0; i < 10; i++)
 		{
-			// if(i == 0)
-			// {
-			// 	//worlds[i] <- helloworld():delay(new Integer(10000));
-			// 	worlds[i] <- helloworld();
-			// }
-			// else
-			// {
-			//	worlds[i] <- helloworld();
-			// }
 /*
+			if(i == 0)
+			{
+				worlds[i] <- helloworld():delay(new Integer(10000));
+			 	worlds[i] <- helloworld();
+			}
+			else
+			{
+				worlds[i] <- helloworld();
+			}
+
 			join {
 			worlds[i] <- helloworld():delay(new Integer(4000));
 			nqueens <- act(args):delay(new Integer(3000));
 			} @ currentContinuation;
-			// starter <- act(args);
+			starter <- act(args);
 */
 			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count);
 		}
