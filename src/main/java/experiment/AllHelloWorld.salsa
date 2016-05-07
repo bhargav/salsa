@@ -14,13 +14,13 @@ behavior AllHelloWorld {
 
     void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count){
 	join{
-		world <- helloworld():delay(new Integer(4000));
-		nqueen <- act(argNqueens):delay(new Integer(10000));
+		world <- helloworld():delay(new Integer(count * 4000));
+		nqueen <- act(argNqueens):delay(new Integer(count * 5000));
 		//world <- helloworld();
 		//nqueen <- act(argNqueens);
 	} @
 	join{
-		fib <- act(argFibonacci):delay(new Integer(count * 5000));
+		fib <- act(argFibonacci):delay(new Integer(count * 6000));
 		/*
 		Speaker sp1 = new Speaker("s1");
 		sp1 <- act(new String[]{"s1"});
@@ -33,22 +33,27 @@ behavior AllHelloWorld {
     }
 
     void act(String arguments[]){
-	HelloWorld1[] worlds = new HelloWorld1[10];
-	String argNqueens[] = new String[] {"5", "5"};
-	String argFibonacci[] = new String[] {"5"};
-	Nqueens nqueens = new Nqueens();
-	Fibonacci fib = new Fibonacci(4);
+	int iter = Integer.parseInt(arguments[0]);
+	HelloWorld1[] worlds = new HelloWorld1[iter];
+
+	Integer queensArg = iter * 5;
+	Integer fibArg = iter * 10;
 	
-	for(int i = 0; i < 10; i++)
+	String argNqueens[] = new String[] {queensArg.toString(), queensArg.toString()};
+	String argFibonacci[] = new String[] {fibArg.toString()};
+	Nqueens nqueens = new Nqueens();
+	Fibonacci fib = new Fibonacci(iter * 4);
+	
+	for(int i = 0; i < iter; i++)
 	{
 		worlds[i] = new HelloWorld1();
 	}
 
 	int count = 0;
-	while(count < 5)
+	while(count < iter * 5)
 	{
 		count++;
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < iter; i++)
 		{
 /*
 			if(i == 0)
