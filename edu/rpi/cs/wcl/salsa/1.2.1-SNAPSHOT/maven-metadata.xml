@@ -2,23 +2,23 @@
 <metadata modelVersion="1.1.0">
   <groupId>edu.rpi.cs.wcl</groupId>
   <artifactId>salsa</artifactId>
-  <version>1.2.0-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20160421.003830</timestamp>
+      <timestamp>20160507.202222</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20160421003830</lastUpdated>
+    <lastUpdated>20160507202222</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.2.0-20160421.003830-1</value>
-        <updated>20160421003830</updated>
+        <value>1.2.1-20160507.202222-1</value>
+        <updated>20160507202222</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.2.0-20160421.003830-1</value>
-        <updated>20160421003830</updated>
+        <value>1.2.1-20160507.202222-1</value>
+        <updated>20160507202222</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>

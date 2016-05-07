@@ -4,7 +4,7 @@
 
     <groupId>edu.rpi.cs.wcl</groupId>
     <artifactId>salsa</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>salsa</name>
@@ -19,6 +19,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.7.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <version>1.7.10</version>
         </dependency>
         <dependency>
