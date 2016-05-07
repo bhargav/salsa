@@ -297,7 +297,7 @@ public class AllHelloWorld extends UniversalActor  {
 					{
 						Object _arguments[] = {  };
 						Message message = new Message( self, world, "helloworld", _arguments, null, token_2_0 );
-						Object[] _propertyInfo = { new Integer(4000) };
+						Object[] _propertyInfo = { new Integer(count*4000) };
 						message.setProperty( "delay", _propertyInfo );
 						__messages.add( message );
 					}
@@ -307,7 +307,7 @@ public class AllHelloWorld extends UniversalActor  {
 					{
 						Object _arguments[] = { argNqueens };
 						Message message = new Message( self, nqueen, "act", _arguments, null, token_2_0 );
-						Object[] _propertyInfo = { new Integer(10000) };
+						Object[] _propertyInfo = { new Integer(count*5000) };
 						message.setProperty( "delay", _propertyInfo );
 						__messages.add( message );
 					}
@@ -320,7 +320,7 @@ public class AllHelloWorld extends UniversalActor  {
 					{
 						Object _arguments[] = { argFibonacci };
 						Message message = new Message( self, fib, "act", _arguments, token_2_0, token_2_1 );
-						Object[] _propertyInfo = { new Integer(count*5000) };
+						Object[] _propertyInfo = { new Integer(count*6000) };
 						message.setProperty( "delay", _propertyInfo );
 						__messages.add( message );
 					}
@@ -335,18 +335,21 @@ public class AllHelloWorld extends UniversalActor  {
 			}
 		}
 		public void act(String arguments[]) {
-			HelloWorld1[] worlds = new HelloWorld1[10];
-			String argNqueens[] = new String[]{ "5", "5" };
-			String argFibonacci[] = new String[]{ "5" };
+			int iter = Integer.parseInt(arguments[0]);
+			HelloWorld1[] worlds = new HelloWorld1[iter];
+			Integer queensArg = iter*5;
+			Integer fibArg = iter*10;
+			String argNqueens[] = new String[]{ queensArg.toString(), queensArg.toString() };
+			String argFibonacci[] = new String[]{ fibArg.toString() };
 			Nqueens nqueens = ((Nqueens)new Nqueens(this).construct());
-			Fibonacci fib = ((Fibonacci)new Fibonacci(this).construct(4));
-			for (int i = 0; i<10; i++){
+			Fibonacci fib = ((Fibonacci)new Fibonacci(this).construct(iter*4));
+			for (int i = 0; i<iter; i++){
 				worlds[i] = ((HelloWorld1)new HelloWorld1(this).construct());
 			}
 			int count = 0;
-			while (count<5) {
+			while (count<iter*5) {
 				count++;
-				for (int i = 0; i<10; i++){
+				for (int i = 0; i<iter; i++){
 					{
 						// pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count)
 						{
