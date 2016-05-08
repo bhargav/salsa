@@ -15,16 +15,16 @@ behavior AllHelloWorld {
         standardOutput <- println("World!");
     }
 
-    void dummy(int count, int total)
+    void dummy(int count, int iterCount, int total)
     {
 	logger.log(Level.INFO, "Iteration: " + count + " out of " + total);
-	if(total == count * iter)
+	if(total == count * iterCount)
 	{
 		logger.log(Level.INFO, "DONE");
 	}
     }       
 
-    void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count, int total){
+    void pump(HelloWorld1 world, Nqueens nqueen, String[] argNqueens, Fibonacci fib, String[] argFibonacci, int count, int iterCount, int total){
 	join{
 		world <- helloworld():delay(new Integer(count * 1000));
 		nqueen <- act(argNqueens):delay(new Integer(count * 1500));
@@ -86,7 +86,7 @@ behavior AllHelloWorld {
 			} @ currentContinuation;
 			starter <- act(args);
 */
-			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, iter * 5 * iter);
+			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, i, iter * 5 * iter);
 		}
 	}
     }
