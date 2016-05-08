@@ -59,31 +59,35 @@ behavior AllHelloWorld {
 	}
 
 	int count = 0;
-	while(count < iter * 5)
+	while(true)
 	{
-		count++;
-		for(int i = 0; i < iter; i++)
+		count = 0;
+		while(count < iter * 5)
 		{
+			count++;
+			for(int i = 0; i < iter; i++)
+			{
 /*
-			if(i == 0)
-			{
-				worlds[i] <- helloworld():delay(new Integer(10000));
-			 	worlds[i] <- helloworld();
-			}
-			else
-			{
-				worlds[i] <- helloworld();
-			}
+				if(i == 0)
+				{
+					worlds[i] <- helloworld():delay(new Integer(10000));
+				 	worlds[i] <- helloworld();
+				}
+				else
+				{
+					worlds[i] <- helloworld();
+				}
 
-			join {
-			worlds[i] <- helloworld():delay(new Integer(4000));
-			nqueens <- act(args):delay(new Integer(3000));
-			} @ currentContinuation;
-			starter <- act(args);
+				join {
+				worlds[i] <- helloworld():delay(new Integer(4000));
+				nqueens <- act(args):delay(new Integer(3000));
+				} @ currentContinuation;
+				starter <- act(args);
 */
-			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, iter * 5 * iter);
-		}
+				pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, iter * 5 * iter);
+			}
 
+		}
 	}
     }
 }
