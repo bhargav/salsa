@@ -18,7 +18,7 @@ behavior AllHelloWorld {
     void dummy(int count, int iterCount, int total)
     {
 	logger.log(Level.INFO, "Iteration: " + count + " out of " + total);
-	if(total == count * iterCount)
+	if(total == (count * (iterCount + 1)))
 	{
 		logger.log(Level.INFO, "DONE");
 	}
