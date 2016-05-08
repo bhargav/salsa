@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import salsa.language.exceptions.CurrentContinuationException;
 
@@ -214,6 +216,7 @@ public class UniversalActor implements ActorReference, java.io.Serializable {
 
 	public UniversalActor(boolean o,UAN uan)        {this(uan);}
 
+	private static Logger logger = Logger.getLogger("ProgressLog");
 	public static HashMap<String, Integer> getActiveActors()
 	{
 		HashMap<String, Integer> actorsMap = new HashMap<String, Integer>();
@@ -850,6 +853,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
 			if(id != null && !id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
 			{
 				//System.out.println(this.getClass().getName() + " AND3 " + currentMessage.getMethodName() + " AND4 ");
+				logger.log(Level.INFO, "Scheduled in: " + targetName);		
 				actorListLock.lock();
 				try {
 					if(activeActorList.containsKey(targetName))
@@ -876,6 +880,7 @@ public abstract class State extends Thread implements Actor, java.io.Serializabl
 			//{
 			if(id != null && !id.contains("StandardOutput") && !id.contains("StandardError") && !id.contains("StandardInput"))
 			{
+				logger.log(Level.INFO, "Scheduled out: " + targetName);
 				actorListLock.lock();
 				boolean keyExists = false;
 				try{
