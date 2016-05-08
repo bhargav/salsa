@@ -43,7 +43,7 @@ behavior AllHelloWorld {
 		Chat ch = new Chat();
 		ch <- act(new String[]{"s1", "s2"});	
 		*/
-	} @ dummy(count, total);
+	} @ dummy(count, iterCount, total);
     }
 
     void act(String arguments[]){
