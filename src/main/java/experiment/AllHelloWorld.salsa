@@ -26,8 +26,10 @@ behavior AllHelloWorld {
 		//world <- helloworld();
 		//nqueen <- act(argNqueens);
 	} @
-	join{
-		fib <- act(argFibonacci):delay(new Integer(count * 2000));
+	join {
+		world <- helloworld():delay(new Integer(count * 1000));
+		nqueen <- act(argNqueens):delay(new Integer(count * 1500));
+		fib <- act(argFibonacci):delay(new Integer(count * 1000));
 		/*
 		Speaker sp1 = new Speaker("s1");
 		sp1 <- act(new String[]{"s1"});
