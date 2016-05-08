@@ -48,10 +48,12 @@ behavior AllHelloWorld {
 
     void act(String arguments[]){
 	iter = Integer.parseInt(arguments[0]);
+	int queensInput = Integer.parseInt(arguments[1]);
+	int fibInput = Integer.parseInt(arguments[2]);
 	HelloWorld1[] worlds = new HelloWorld1[iter];
 
-	Integer queensArg = iter * 5;
-	Integer fibArg = iter * 2;
+	Integer queensArg = queensInput;
+	Integer fibArg = fibInput;
 	
 	String argNqueens[] = new String[] {queensArg.toString(), queensArg.toString()};
 	String argFibonacci[] = new String[] {fibArg.toString()};
@@ -64,7 +66,7 @@ behavior AllHelloWorld {
 	}
 
 	int count = 0;
-	while(count < iter * 5)
+	while(count < iter * 3)
 	{
 		count++;
 		for(int i = 0; i < iter; i++)
@@ -86,7 +88,7 @@ behavior AllHelloWorld {
 			} @ currentContinuation;
 			starter <- act(args);
 */
-			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, i, iter * 5 * iter);
+			pump(worlds[i], nqueens, argNqueens, fib, argFibonacci, count, i, iter * 3 * iter);
 		}
 	}
     }
