@@ -4,7 +4,7 @@
 
     <groupId>edu.rpi.cs.wcl</groupId>
     <artifactId>salsa</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>salsa</name>
